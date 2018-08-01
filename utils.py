@@ -51,7 +51,7 @@ def concat_sql_from_binlog_event(cursor, binlog_event, row=None, e_start_pos=Non
         pattern = generate_sql_pattern(binlog_event, row=row, flashback=flashback, no_pk=no_pk)
         sql = cursor.mogrify(pattern['template'], pattern['values'])
         time = datetime.datetime.fromtimestamp(binlog_event.timestamp)
-        sql += ' #start %s end %s time %s' % (e_start_pos, binlog_event.packet.log_pos, time)
+        #sql += ' #start %s end %s time %s' % (e_start_pos, binlog_event.packet.log_pos, time)
     elif flashback is False and isinstance(binlog_event, QueryEvent) and binlog_event.query != 'BEGIN' \
             and binlog_event.query != 'COMMIT':
         if binlog_event.schema:

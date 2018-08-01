@@ -10,18 +10,20 @@ from pymysqlreplication.row_event import (
 from utils import concat_sql_from_binlog_event
 import pymysql
 import os
+import sys
+import logging
 
-def main():
-  configs = {
-      "host": os.environ['MYSQL_HOST'],
-      "port": int(os.environ['MYSQL_PORT']),
-      "user": os.environ['MYSQL_USER'],
-      "passwd": os.environ['MYSQL_PASSWORD']
-  }
-  conn = pymysql.connect(**configs)  
+# Logging
+logging.basicConfig(
+    stream=sys.stdout,
+    level=logging.INFO,
+    format="%(levelname)s %(message)s")
+
+def main(mysqlConfigs):
+  conn = pymysql.connect(**mysqlConfigs)  
   cursor = conn.cursor()
   stream = BinLogStreamReader(
-    connection_settings = configs,
+    connection_settings = mysqlConfigs,
     server_id=100,
     blocking=True,
     resume_stream=True,
@@ -42,4 +44,11 @@ def main():
 
 
 if __name__ == "__main__":
-   main()
+  mysqlConfigs = {
+      "host": os.getenv('MYSQL_HOST'),
+      "port": int(os.getenv('MYSQL_PORT')),
+      "user": os.getenv('MYSQL_USER'),
+      "passwd": os.getenv('MYSQL_PASSWORD'),
+      'db': os.getenv('MYSQL_DATABASE'),
+  }
+  main(mysqlConfigs)

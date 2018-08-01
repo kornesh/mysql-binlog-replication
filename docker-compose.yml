@@ -12,7 +12,7 @@ services:
     environment:
       - MYSQL_HOST=mysql
       - MYSQL_PORT=3306
-      - MYSQL_DATABASE=test
+      - MYSQL_DATABASE=testdb
       - MYSQL_USER=root
       - MYSQL_PASSWORD=example
       - PYTHONUNBUFFERED=0
