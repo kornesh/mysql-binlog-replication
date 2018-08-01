@@ -55,3 +55,4 @@ python_1  | DELETE FROM `testdb`.`testtbl` WHERE `name`='bonjour' AND `id`=1 LIM
 - https://www.alooma.com/blog/mysql-to-amazon-redshift-replication
 - https://aws.amazon.com/blogs/database/streaming-changes-in-a-database-with-amazon-kinesis/
 - https://github.com/danfengcao/binlog2sql
+- https://www.thegeekstuff.com/2017/08/mysqlbinlog-examples/

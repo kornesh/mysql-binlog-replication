@@ -48,6 +48,8 @@ python_1  | UPDATE testtbl SET name='world', id=3 WHERE name='zdravstvuy' AND id
 python_1  | DELETE FROM testtbl WHERE name='yolo' AND id=1;
 python_1  | DELETE FROM testtbl WHERE name='yolo' AND id=1;
 ```
+Executing these queries one by one is really slow. Ideally, we should batch them together.
+![Snowflake History showing slow queries](https://i.imgur.com/iVXQ3Nx.png)
 
 # References
 - https://www.alooma.com/blog/mysql-to-amazon-redshift-replication

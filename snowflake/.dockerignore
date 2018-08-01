@@ -15,5 +15,3 @@ __pycache__/
 
 lib/
 .env
-
-snowflake/
