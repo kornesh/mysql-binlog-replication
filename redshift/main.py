@@ -28,11 +28,13 @@ def main(mysqlConfigs, redshiftConfigs):
 
   conn = pymysql.connect(**mysqlConfigs)
 
+
+
   rs.cursor().execute("""
     DROP TABLE IF EXISTS testtbl;
     CREATE TABLE testtbl(id integer, name varchar(255));
     """)
-  
+
   stream = BinLogStreamReader(
     connection_settings = mysqlConfigs,
     server_id=100,
@@ -61,6 +63,12 @@ def main(mysqlConfigs, redshiftConfigs):
         rs.cursor().execute(binlog2sql)
       except psycopg2.Error as e:
         print(e)
+
+      # cur = rs.cursor()
+      # cur.execute("SELECT * FROM testtbl;")
+
+      # for row in cur.fetchall():
+      #   print(row)
       
 
 if __name__ == "__main__":

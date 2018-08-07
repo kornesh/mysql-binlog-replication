@@ -1,28 +1,20 @@
-# Streaming mysql binlog replication to Snowflake
+# Streaming mysql binlog replication to Redshift
 
 
-In Snowflakes web interface run this query to create a database and table
+Run this query on Redshift to create a new table
 ```sql
-CREATE OR REPLACE DATABASE testdb;
-USE DATABASE testdb;
-CREATE OR REPLACE TABLE testtbl(id integer, name string);
-```
-```
-docker-compose exec mysql mysql -u root -pexample -e "DROP DATABASE IF EXISTS testdb; CREATE DATABASE testdb; USE testdb; CREATE TABLE testtbl (id int, name varchar(255));"
+    DROP TABLE IF EXISTS testtbl;
+    CREATE TABLE testtbl(id integer, name varchar(255));
 ```
 
-You can use the following python script to generate Snowflake compatible schema
+Clone this repo and update your Redshift credentials in `example.env`, then
 ```bash
- docker-compose exec python python mysql2snowsql.py
-```
-
-Clone this repo and update your Snowflake credentials in `example.env`, then
-```bash
+cd redshift/
 mv example.env .env
 docker-compose up --build
 ```
 
-Note: If you get `Can't connect to MySQL server on 'mysql' ([Errno 111] Connection refused)` error on the first run, try running it again.
+> Note: If you get `Can't connect to MySQL server on 'mysql' ([Errno 111] Connection refused)` error on the first run, try running it again.
 
 In another terminal run
 ```bash
@@ -51,11 +43,11 @@ python_1  | UPDATE testtbl SET name='world', id=3 WHERE name='zdravstvuy' AND id
 python_1  | DELETE FROM testtbl WHERE name='yolo' AND id=1;
 python_1  | DELETE FROM testtbl WHERE name='yolo' AND id=1;
 ```
-Executing these queries one by one is really slow. Ideally, we should batch them together.
-![Snowflake History showing slow queries](https://i.imgur.com/iVXQ3Nx.png)
+Executing these queries one by one is not optimal. Ideally, we should batch them together.
+![Redshift History showing slow queries](https://i.imgur.com/r4vVhHL.png)
 
 # References
-- https://www.alooma.com/blog/mysql-to-amazon-redshift-replication
-- https://aws.amazon.com/blogs/database/streaming-changes-in-a-database-with-amazon-kinesis/
-- https://github.com/danfengcao/binlog2sql
-- https://www.thegeekstuff.com/2017/08/mysqlbinlog-examples/
+- https://docs.aws.amazon.com/redshift/latest/dg/r_INSERT_30.html
+- https://docs.aws.amazon.com/redshift/latest/dg/t_Updating_tables_with_DML_commands.html
+- https://docs.aws.amazon.com/redshift/latest/dg/c_redshift-and-postgres-sql.html
+- https://www.blendo.co/blog/access-your-data-in-amazon-redshift-and-postgresql-with-python-and-r/

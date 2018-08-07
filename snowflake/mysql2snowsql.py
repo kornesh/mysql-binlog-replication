@@ -13,7 +13,7 @@ def mysql_to_snowflake(mysql_ddl):
 	result = apply_regex_sub(r'(DROP(.)+)\n', result, "") # Remove DROP Table reference
 	result = apply_regex_sub(r'\sDEFAULT(.+,)', result, ",") # Remove DEFAULT
 	result = apply_regex_sub(r'\s((NOT\sNULL)|NULL)', result, "") # Remove NULL
-	result = apply_regex_sub(r"(((enum|varchar|nvarchar)\(['0-9a-zA-Z,]+\))|(text))(.)+", result, "STRING,") # STRING data types
+	result = apply_regex_sub(r"(((enum|varchar|nvarchar|char)\(['0-9a-zA-Z,]+\))|(text))(.)+", result, "STRING,") # STRING data types
 	result = apply_regex_sub(r'(tiny|big)?int\([0-9a-zA-Z,]+\)(\s(unsigned))?', result, "NUMBER") # NUMBER data types
 	result = apply_regex_sub(r'datetime', result, "TIMESTAMP_LTZ") # TIMESTAMP_LTZ data types
 	result = apply_regex_sub(r'\s\s(((PRIMARY)|(UNIQUE))\s)?KEY(.+)\n', result, "") # Strip KEYS

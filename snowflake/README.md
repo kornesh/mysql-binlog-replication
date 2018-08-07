@@ -15,11 +15,12 @@ You can use the following python script to generate Snowflake compatible schema
 
 Clone this repo and update your Snowflake credentials in `example.env`, then
 ```bash
+cd snowflake/
 mv example.env .env
 docker-compose up --build
 ```
 
-Note: If you get `Can't connect to MySQL server on 'mysql' ([Errno 111] Connection refused)` error on the first run, try running it again.
+> Note: If you get `Can't connect to MySQL server on 'mysql' ([Errno 111] Connection refused)` error on the first run, try running it again.
 
 In another terminal run
 ```bash
