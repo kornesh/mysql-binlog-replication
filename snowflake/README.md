@@ -1,5 +1,5 @@
 # Streaming mysql binlog replication to Snowflake
-
+[![](https://images.microbadger.com/badges/image/kornesh/mysql2snowflake.svg)](https://hub.docker.com/r/kornesh/mysql2snowflake/)
 
 In Snowflakes web interface run this query to create a database and table
 ```sql

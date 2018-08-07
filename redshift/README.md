@@ -1,5 +1,5 @@
 # Streaming mysql binlog replication to Redshift
-
+[![](https://images.microbadger.com/badges/image/kornesh/mysql2redshift.svg)](https://hub.docker.com/r/kornesh/mysql2redshift/)
 
 Run this query on Redshift to create a new table
 ```sql

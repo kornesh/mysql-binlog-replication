@@ -12,3 +12,9 @@ jobs:
 
      # deploy the image
      - run: docker push $DOCKER_USER/mysql2snowflake:latest
+
+     # build the application image
+     - run: docker build -t $DOCKER_USER/mysql2redshift:latest redshift/
+
+     # deploy the image
+     - run: docker push $DOCKER_USER/mysql2redshift:latest
