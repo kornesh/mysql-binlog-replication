@@ -12,7 +12,7 @@ import pymysql
 import os
 import sys
 import logging
-import snowflake.connector
+import psycopg2
 
 
 # Logging
@@ -22,14 +22,16 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(levelname)s %(message)s")
 
-def main(snowflakeConfig, mysqlConfigs):
-  # Connecting to Snowflake
-  sf = snowflake.connector.connect(**snowflakeConfig)
+def main(mysqlConfigs, redshiftConfigs):
+
+  rs = psycopg2.connect(**redshiftConfigs)
 
   conn = pymysql.connect(**mysqlConfigs)
-  # Usually a schema is a collection of tables and a Database is a collection of schemas.
-  # https://stackoverflow.com/a/19257781
 
+  rs.cursor().execute("""
+    DROP TABLE IF EXISTS testtbl;
+    CREATE TABLE testtbl(id integer, name varchar(255));
+    """)
   
   stream = BinLogStreamReader(
     connection_settings = mysqlConfigs,
@@ -52,27 +54,22 @@ def main(snowflakeConfig, mysqlConfigs):
       #if isinstance(binlog_event, QueryEvent) and binlog_event.query == 'BEGIN':
       #  e_start_pos = last_pos
       #print(json.dumps(event))
-      binlog2sql = concat_sql_from_binlog_event(cursor=cursor, binlog_event=binlogevent, row=row, e_start_pos=e_start_pos).replace('`', '')
+      binlog2sql = concat_sql_from_binlog_event(cursor=cursor, binlog_event=binlogevent, row=row, e_start_pos=e_start_pos).replace('`', "")
       print(binlog2sql)
 
       try:
-        sf.cursor().execute(binlog2sql)
-      except snowflake.connector.errors.ProgrammingError as e:
-        # default error message
+        rs.cursor().execute(binlog2sql)
+      except psycopg2.Error as e:
         print(e)
-        # customer error message
-        print('Error {0} ({1}): {2} ({3})'.format(e.errno, e.sqlstate, e.msg, e.sfqid))
-
+      
 
 if __name__ == "__main__":
-  # Setting your account and login information
-  snowflakeConfig = {
-      'account': os.getenv('SNOWFLAKE_ACCOUNT'),
-      'user': os.getenv('SNOWFLAKE_USER'),
-      'password': os.getenv('SNOWFLAKE_PASSWORD'),
-      'warehouse': os.getenv('SNOWFLAKE_WAREHOUSE'),
-      'database': os.getenv('SNOWFLAKE_DATABASE'),
-      'schema': 'PUBLIC'
+  redshiftConfigs = {
+      "host": os.getenv('REDSHIFT_HOST'),
+      "port": int(os.getenv('REDSHIFT_PORT')),
+      "user": os.getenv('REDSHIFT_USER'),
+      "password": os.getenv('REDSHIFT_PASSWORD'),
+      'dbname': os.getenv('REDSHIFT_DATABASE'),
   }
   mysqlConfigs = {
       "host": os.getenv('MYSQL_HOST'),
@@ -81,4 +78,4 @@ if __name__ == "__main__":
       "passwd": os.getenv('MYSQL_PASSWORD'),
       'db': os.getenv('MYSQL_DATABASE'),
   }
-  main(snowflakeConfig, mysqlConfigs)
+  main(mysqlConfigs, redshiftConfigs)

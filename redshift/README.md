@@ -7,6 +7,9 @@ CREATE OR REPLACE DATABASE testdb;
 USE DATABASE testdb;
 CREATE OR REPLACE TABLE testtbl(id integer, name string);
 ```
+```
+docker-compose exec mysql mysql -u root -pexample -e "DROP DATABASE IF EXISTS testdb; CREATE DATABASE testdb; USE testdb; CREATE TABLE testtbl (id int, name varchar(255));"
+```
 
 You can use the following python script to generate Snowflake compatible schema
 ```bash
