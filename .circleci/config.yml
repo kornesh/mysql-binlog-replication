@@ -18,3 +18,9 @@ jobs:
 
      # deploy the image
      - run: docker push $DOCKER_USER/mysql2redshift:latest
+
+     # build the application image
+     - run: docker build -t $DOCKER_USER/mysql2bigquery:latest bigquery/
+
+     # deploy the image
+     - run: docker push $DOCKER_USER/mysql2bigquery:latest

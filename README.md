@@ -1,5 +1,5 @@
 # Streaming mysql binlog replication to Snowflake/Redshift/BigQuery
-[![CircleCI](https://circleci.com/gh/kornesh/mysql-binlog-replication.svg?style=svg)](https://circleci.com/gh/kornesh/mysql-binlog-replication)
+[![CircleCI](https://circleci.com/gh/trainingrocket/mysql-binlog-replication.svg?style=svg)](https://circleci.com/gh/trainingrocket/mysql-binlog-replication)
 
 ```bash
 docker-compose up --build
