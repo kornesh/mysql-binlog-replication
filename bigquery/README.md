@@ -1,5 +1,5 @@
 # Streaming mysql binlog replication to BigQuery
-[![](https://images.microbadger.com/badges/image/kornesh/mysql2bigquery.svg)](https://hub.docker.com/r/kornesh/mysql2bigquery/)
+[![](https://images.microbadger.com/badges/image/servicerocket/mysql2bigquery.svg)](https://hub.docker.com/r/servicerocket/mysql2bigquery/)
 
 Generate a [JSON service account](https://cloud.google.com/bigquery/docs/reference/libraries#client-libraries-install-python) credentials file and copy it to `bigquery/` directory and mount the file from `docker-compose.yml`. 
 

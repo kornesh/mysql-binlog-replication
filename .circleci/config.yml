@@ -8,19 +8,19 @@ jobs:
      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
 
      # build the application image
-     - run: docker build -t $DOCKER_USER/mysql2snowflake:latest snowflake/
+     - run: docker build -t servicerocket/mysql2snowflake:latest snowflake/
 
      # deploy the image
-     - run: docker push $DOCKER_USER/mysql2snowflake:latest
+     - run: docker push servicerocket/mysql2snowflake:latest
 
      # build the application image
-     - run: docker build -t $DOCKER_USER/mysql2redshift:latest redshift/
+     - run: docker build -t servicerocket/mysql2redshift:latest redshift/
 
      # deploy the image
-     - run: docker push $DOCKER_USER/mysql2redshift:latest
+     - run: docker push servicerocket/mysql2redshift:latest
 
      # build the application image
-     - run: docker build -t $DOCKER_USER/mysql2bigquery:latest bigquery/
+     - run: docker build -t servicerocket/mysql2bigquery:latest bigquery/
 
      # deploy the image
-     - run: docker push $DOCKER_USER/mysql2bigquery:latest
+     - run: docker push servicerocket/mysql2bigquery:latest
