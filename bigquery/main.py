@@ -12,8 +12,7 @@ import pymysql
 import os
 import sys
 import logging
-import psycopg2
-
+from google.cloud import bigquery
 
 # Logging
 logging.basicConfig(
@@ -23,17 +22,48 @@ logging.basicConfig(
     format="%(levelname)s %(message)s")
 
 def main(mysqlConfigs, redshiftConfigs):
+  SCHEMA = [
+      bigquery.SchemaField('id', 'INTEGER', mode='REQUIRED'),
+      bigquery.SchemaField('name', 'STRING', mode='REQUIRED'),
+  ]
 
-  rs = psycopg2.connect(**redshiftConfigs)
+  project_id = os.getenv('PROJECT_ID')
+  dataset_id = 'testdb'
+  table_id = 'testtbl'
 
+  client = bigquery.Client()
+
+  
+  client.delete_dataset(client.dataset(dataset_id), delete_contents=True)
+
+  dataset = bigquery.Dataset(client.dataset(dataset_id))
+  dataset = client.create_dataset(dataset)
+  dataset.location = 'US'
+
+  table = bigquery.Table(dataset.table(table_id), schema=SCHEMA)
+  table = client.create_table(table)
+
+  query = "SELECT * FROM `{}`.`{}`.`{}` limit 100".format(project_id, dataset_id, table_id)
+
+
+  client = bigquery.Client()
+  table_ref = client.dataset(dataset_id).table(table_id)
+  '''  
+  table = client.get_table(table_ref)
+  rows_to_insert = [
+      ('Phred Phlyntstone', 32),
+      ('Wylma Phlyntstone', 1),
+  ]
+  errors = client.insert_rows(table, rows_to_insert)
+  print(errors)
+  assert errors == []
+  '''
+
+  query_job = client.query(query, location='US')
+  for row in query_job:
+      print(row)
   conn = pymysql.connect(**mysqlConfigs)
 
-
-
-  rs.cursor().execute("""
-    DROP TABLE IF EXISTS testtbl;
-    CREATE TABLE testtbl(id integer, name varchar(255));
-    """)
 
   stream = BinLogStreamReader(
     connection_settings = mysqlConfigs,
@@ -56,29 +86,18 @@ def main(mysqlConfigs, redshiftConfigs):
       #if isinstance(binlog_event, QueryEvent) and binlog_event.query == 'BEGIN':
       #  e_start_pos = last_pos
       #print(json.dumps(event))
-      binlog2sql = concat_sql_from_binlog_event(cursor=cursor, binlog_event=binlogevent, row=row, e_start_pos=e_start_pos).replace('`', "")
+      binlog2sql = concat_sql_from_binlog_event(cursor=cursor, binlog_event=binlogevent, row=row, e_start_pos=e_start_pos).replace('`', "").replace('testtbl', '`testdb.testtbl`')
       print(binlog2sql)
 
-      try:
-        rs.cursor().execute(binlog2sql)
-      except psycopg2.Error as e:
-        print(e)
-
-      # cur = rs.cursor()
-      # cur.execute("SELECT * FROM testtbl;")
-
-      # for row in cur.fetchall():
-      #   print(row)
+      query_job = client.query(binlog2sql, location='US')
+      result = query_job.result()
+      #print("Total rows affected: ", query_job.num_dml_affected_rows)
       
+      #query_job = client.query(query, location='US')
+      #for row in query_job:
+      #    print(row)
 
 if __name__ == "__main__":
-  redshiftConfigs = {
-      "host": os.getenv('REDSHIFT_HOST'),
-      "port": int(os.getenv('REDSHIFT_PORT')),
-      "user": os.getenv('REDSHIFT_USER'),
-      "password": os.getenv('REDSHIFT_PASSWORD'),
-      'dbname': os.getenv('REDSHIFT_DATABASE'),
-  }
   mysqlConfigs = {
       "host": os.getenv('MYSQL_HOST'),
       "port": int(os.getenv('MYSQL_PORT')),
@@ -86,4 +105,7 @@ if __name__ == "__main__":
       "passwd": os.getenv('MYSQL_PASSWORD'),
       'db': os.getenv('MYSQL_DATABASE'),
   }
-  main(mysqlConfigs, redshiftConfigs)
+  bigqueryConfigs = {
+    'dataset': 'testdb'
+  }
+  main(mysqlConfigs, bigqueryConfigs)

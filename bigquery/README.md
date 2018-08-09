@@ -1,15 +1,11 @@
-# Streaming mysql binlog replication to Redshift
-[![](https://images.microbadger.com/badges/image/kornesh/mysql2redshift.svg)](https://hub.docker.com/r/kornesh/mysql2redshift/)
+# Streaming mysql binlog replication to BigQuery
+[![](https://images.microbadger.com/badges/image/kornesh/mysql2bigquery.svg)](https://hub.docker.com/r/kornesh/mysql2bigquery/)
 
-Run this query on Redshift to create a new table
-```sql
-    DROP TABLE IF EXISTS testtbl;
-    CREATE TABLE testtbl(id integer, name varchar(255));
-```
+Generate a [JSON service account](https://cloud.google.com/bigquery/docs/reference/libraries#client-libraries-install-python) credentials file and copy it to `bigquery/` directory and mount the file from `docker-compose.yml`. 
 
-Clone this repo and update your Redshift credentials in `example.env`, then
+Clone this repo and update your GCP `PROJECT_ID` and `GOOGLE_APPLICATION_CREDENTIALS` location in `example.env`, then
 ```bash
-cd redshift/
+cd bigquery/
 mv example.env .env
 docker-compose up --build
 ```
@@ -44,10 +40,7 @@ python_1  | DELETE FROM testtbl WHERE name='yolo' AND id=1;
 python_1  | DELETE FROM testtbl WHERE name='yolo' AND id=1;
 ```
 Executing these queries one by one is not optimal. Ideally, we should batch them together.
-![Redshift History showing slow queries](https://i.imgur.com/r4vVhHL.png)
 
 # References
-- https://docs.aws.amazon.com/redshift/latest/dg/r_INSERT_30.html
-- https://docs.aws.amazon.com/redshift/latest/dg/t_Updating_tables_with_DML_commands.html
-- https://docs.aws.amazon.com/redshift/latest/dg/c_redshift-and-postgres-sql.html
-- https://www.blendo.co/blog/access-your-data-in-amazon-redshift-and-postgresql-with-python-and-r/
+- https://googlecloudplatform.github.io/google-cloud-python/latest/bigquery/usage.html
+- https://cloud.google.com/bigquery/streaming-data-into-bigquery

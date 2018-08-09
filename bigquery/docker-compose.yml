@@ -9,6 +9,7 @@ services:
       - mysql
     volumes:
       - ./:/app
+      - ./Exoot-28bad1c01d20.json:/service_account.json
     env_file:
      - ./.env
     environment:
