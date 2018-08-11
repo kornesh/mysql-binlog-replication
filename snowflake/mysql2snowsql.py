@@ -13,7 +13,7 @@ def mysql_to_snowflake(mysql_ddl):
 	result = apply_regex_sub(r'(DROP(.)+)\n', result, "") # Remove DROP Table reference
 	result = apply_regex_sub(r'\sDEFAULT(.+,)', result, ",") # Remove DEFAULT
 	result = apply_regex_sub(r'\s((NOT\sNULL)|NULL)', result, "") # Remove NULL
-	result = apply_regex_sub(r"(((enum|varchar|nvarchar|char)\(['0-9a-zA-Z,]+\))|(text))(.)+", result, "STRING,") # STRING data types
+	result = apply_regex_sub(r"((enum|varchar|nvarchar|char)\(['0-9a-zA-Z,]+\))(.)+", result, "STRING,") # STRING data types
 	result = apply_regex_sub(r'(tiny|big)?int\([0-9a-zA-Z,]+\)(\s(unsigned))?', result, "NUMBER") # NUMBER data types
 	result = apply_regex_sub(r'datetime', result, "TIMESTAMP_LTZ") # TIMESTAMP_LTZ data types
 	result = apply_regex_sub(r'\s\s(((PRIMARY)|(UNIQUE))\s)?KEY(.+)\n', result, "") # Strip KEYS
@@ -23,12 +23,27 @@ def mysql_to_snowflake(mysql_ddl):
 	result = apply_regex_sub(r'^(?:[\t ]*(?:\r?\n|\r))+', result, "") # Discard blank lines
 	result = apply_regex_sub(r'bit\([0-9a-zA-Z,]+\)', result, "BOOLEAN") # BOOLEAN data types
 	
-	return result
+	r = re.compile(r'(\s)(longblob|blob|longtext|text)(\n|\,)', re.MULTILINE)
+	result = re.sub(r, r"\1STRING\3", result)
 
+	return result
+from time import sleep
+from random import randint
+import snowflake.connector
 def main(mysqlConfigs):
 	conn = pymysql.connect(**mysqlConfigs)
 	cur = conn.cursor()
 	cur.execute("SHOW TABLES")
+	snowflakeConfig = {
+		'account': os.getenv('SNOWFLAKE_ACCOUNT'),
+		'user': os.getenv('SNOWFLAKE_USER'),
+		'password': os.getenv('SNOWFLAKE_PASSWORD'),
+		'warehouse': os.getenv('SNOWFLAKE_WAREHOUSE'),
+		'database': os.getenv('SNOWFLAKE_DATABASE'),
+		'schema': 'PUBLIC'
+	}
+	sf = snowflake.connector.connect(**snowflakeConfig)
+
 	for (table_name,) in cur.fetchall():
 	  print("/* TABLE:", table_name, "*/")
 
@@ -36,8 +51,16 @@ def main(mysqlConfigs):
 
 	  sql = cur.fetchone()[1]
 	  #print(sql)
-	  print(mysql_to_snowflake(sql))
 
+	  if sql.find('CREATE ALGORITHM') != -1:
+	  	print("/* Skipping", table_name,"*/")
+	  	continue
+	  
+	  snowsql = mysql_to_snowflake(sql).replace("CREATE TABLE", "CREATE OR REPLACE TABLE")
+	  print(snowsql)
+	  #sf.cursor().execute(snowsql)
+
+	main(mysqlConfigs)
 if __name__ == "__main__":
   mysqlConfigs = {
       "host": os.getenv('MYSQL_HOST'),
