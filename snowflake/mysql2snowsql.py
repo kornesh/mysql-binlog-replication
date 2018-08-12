@@ -2,6 +2,7 @@
 import re
 import os
 import pymysql
+import snowflake.connector
 
 def apply_regex_sub(regex, expression, sub_string):
 	p = re.compile(regex, re.MULTILINE)
@@ -27,21 +28,11 @@ def mysql_to_snowflake(mysql_ddl):
 	result = re.sub(r, r"\1STRING\3", result)
 
 	return result
-from time import sleep
-from random import randint
-import snowflake.connector
+
 def main(mysqlConfigs):
 	conn = pymysql.connect(**mysqlConfigs)
 	cur = conn.cursor()
 	cur.execute("SHOW TABLES")
-	snowflakeConfig = {
-		'account': os.getenv('SNOWFLAKE_ACCOUNT'),
-		'user': os.getenv('SNOWFLAKE_USER'),
-		'password': os.getenv('SNOWFLAKE_PASSWORD'),
-		'warehouse': os.getenv('SNOWFLAKE_WAREHOUSE'),
-		'database': os.getenv('SNOWFLAKE_DATABASE'),
-		'schema': 'PUBLIC'
-	}
 	sf = snowflake.connector.connect(**snowflakeConfig)
 
 	for (table_name,) in cur.fetchall():
@@ -60,13 +51,20 @@ def main(mysqlConfigs):
 	  print(snowsql)
 	  #sf.cursor().execute(snowsql)
 
-	main(mysqlConfigs)
 if __name__ == "__main__":
-  mysqlConfigs = {
-      "host": os.getenv('MYSQL_HOST'),
-      "port": int(os.getenv('MYSQL_PORT')),
-      "user": os.getenv('MYSQL_USER'),
-      "passwd": os.getenv('MYSQL_PASSWORD'),
-      'db': os.getenv('MYSQL_DATABASE'),
-  }
-  main(mysqlConfigs)
+	snowflakeConfig = {
+		'account': os.getenv('SNOWFLAKE_ACCOUNT'),
+		'user': os.getenv('SNOWFLAKE_USER'),
+		'password': os.getenv('SNOWFLAKE_PASSWORD'),
+		'warehouse': os.getenv('SNOWFLAKE_WAREHOUSE'),
+		'database': os.getenv('SNOWFLAKE_DATABASE'),
+		'schema': 'PUBLIC'
+	}
+	mysqlConfigs = {
+		"host": os.getenv('MYSQL_HOST'),
+		"port": int(os.getenv('MYSQL_PORT')),
+		"user": os.getenv('MYSQL_USER'),
+		"passwd": os.getenv('MYSQL_PASSWORD'),
+		'db': os.getenv('MYSQL_DATABASE'),
+	}
+	main(mysqlConfigs)
