@@ -52,6 +52,28 @@ python_1  | {"type": "DeleteRowsEvent", "row": {"values": {"name": "bonjour", "i
 python_1  | DELETE FROM `testdb`.`testtbl` WHERE `name`='bonjour' AND `id`=1 LIMIT 1;
 ```
 
+# Change Data Capture from RDS instance
+
+[Update RDS parameter group](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_LogAccess.Concepts.MySQL.html#USER_LogAccess.MySQL.BinaryFormat) to make sure `log_bin` is enabled and set `binlog_format` to `ROW`.
+Update the environment variables with RDS credentials, `MYSQL_HOST` should be something like `testdb.xxx.us-west-2.rds.amazonaws.com`.
+
+```
+mysql> show global variables like 'log_bin'; show global variables like 'binlog_format';
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| log_bin       | ON    |
++---------------+-------+
+1 row in set (0.64 sec)
+
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| binlog_format | ROW   |
++---------------+-------+
+1 row in set (0.61 sec)
+```
+
 # References
 - https://www.alooma.com/blog/mysql-to-amazon-redshift-replication
 - https://aws.amazon.com/blogs/database/streaming-changes-in-a-database-with-amazon-kinesis/

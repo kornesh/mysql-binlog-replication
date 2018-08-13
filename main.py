@@ -39,8 +39,9 @@ def main(mysqlConfigs):
       }
       #if isinstance(binlog_event, QueryEvent) and binlog_event.query == 'BEGIN':
       #  e_start_pos = last_pos
-      print(json.dumps(event))
+      print("/*", json.dumps(event), "*/")
       print(concat_sql_from_binlog_event(cursor=cursor, binlog_event=binlogevent, row=row, e_start_pos=e_start_pos))
+      print()
 
 
 if __name__ == "__main__":

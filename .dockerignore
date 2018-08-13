@@ -17,3 +17,5 @@ lib/
 .env
 
 snowflake/
+redshift/
+bigquery/

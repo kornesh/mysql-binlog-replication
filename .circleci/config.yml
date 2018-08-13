@@ -24,3 +24,9 @@ jobs:
 
      # deploy the image
      - run: docker push servicerocket/mysql2bigquery:latest
+
+     # build the application image
+     - run: docker build -t servicerocket/mysql2stdout:latest .
+
+     # deploy the image
+     - run: docker push servicerocket/mysql2stdout:latest
