@@ -5,7 +5,9 @@
 docker-compose up --build
 ```
 
-Note: If you get `Can't connect to MySQL server on 'mysql' ([Errno 111] Connection refused)` error on the first run, try running it again.
+> Note: If you get `Can't connect to MySQL server on 'mysql' ([Errno 111] Connection refused)` error on the first run, try running it again.
+
+We can actually merge all these images into a single image, but I personally prefer it for simplicity at the expense of code duplication.
 
 In another terminal login into the mysql instance
 ```bash
