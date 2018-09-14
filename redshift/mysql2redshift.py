@@ -137,7 +137,7 @@ def parse(input_filename, output_filename):
                 elif type == "double":
                     type = "double precision"
                 elif type.endswith("blob"):
-                    type = "bytea"
+                    type = "text"
                 elif type.startswith("enum(") or type.startswith("set("):
 
                     types_str = type.split("(")[1].rstrip(")").rstrip('"')
