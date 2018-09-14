@@ -70,6 +70,9 @@ def parse(input_filename, output_filename):
         ))
         logging.flush()
         line = line.strip().replace(r"\\", "WUBWUBREALSLASHWUB").replace(r"\'", "''").replace("WUBWUBREALSLASHWUB", r"\\")
+
+        line = line.replace('b\'0\'', '0').replace('b\'1\'', '1')
+
         # Ignore comment lines
         if line.startswith("--") or line.startswith("/*") or line.startswith("LOCK TABLES") or line.startswith("DROP TABLE") or line.startswith("UNLOCK TABLES") or not line:
             continue
@@ -138,6 +141,8 @@ def parse(input_filename, output_filename):
                     type = "double precision"
                 elif type.endswith("blob"):
                     type = "text"
+                elif type.startswith("bit(1)"):
+                    type = "boolean"
                 elif type.startswith("enum(") or type.startswith("set("):
 
                     types_str = type.split("(")[1].rstrip(")").rstrip('"')
