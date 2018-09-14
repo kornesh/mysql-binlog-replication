@@ -71,7 +71,7 @@ def parse(input_filename, output_filename):
         logging.flush()
         line = line.strip().replace(r"\\", "WUBWUBREALSLASHWUB").replace(r"\'", "''").replace("WUBWUBREALSLASHWUB", r"\\")
 
-        line = line.replace('b\'0\'', '0').replace('b\'1\'', '1')
+        line = line.replace('b\'0\'', '0').replace('b\'1\'', '1').replace('0000-00-00 00:00:00', '1970-01-01 00:00:00')
 
         # Ignore comment lines
         if line.startswith("--") or line.startswith("/*") or line.startswith("LOCK TABLES") or line.startswith("DROP TABLE") or line.startswith("UNLOCK TABLES") or not line:
