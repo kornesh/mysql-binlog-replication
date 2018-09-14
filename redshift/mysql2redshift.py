@@ -51,9 +51,9 @@ def parse(input_filename, output_filename):
 
     output.write("-- Converted by db_converter\n")
     output.write("START TRANSACTION;\n")
-    output.write("SET standard_conforming_strings=off;\n")
-    output.write("SET escape_string_warning=off;\n")
-    output.write("SET CONSTRAINTS ALL DEFERRED;\n\n")
+    #output.write("SET standard_conforming_strings=off;\n")
+    #output.write("SET escape_string_warning=off;\n")
+    #output.write("SET CONSTRAINTS ALL DEFERRED;\n\n")
 
     for i, line in enumerate(input_fh):
         time_taken = time.time() - started
