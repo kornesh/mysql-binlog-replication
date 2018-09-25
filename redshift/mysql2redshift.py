@@ -210,6 +210,8 @@ def parse(input_filename, output_filename):
     # Write FK constraints out
     output.write("\n-- Foreign keys --\n")
     for line in foreign_key_lines:
+        for i in [" ON DELETE NO ACTION", " ON UPDATE NO ACTION", " ON DELETE CASCADE"]:
+            line = line.replace(i, "")
         output.write("%s;\n" % line)
 
     # Write sequences out
