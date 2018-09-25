@@ -185,6 +185,7 @@ def parse(input_filename, output_filename):
                 pass
             # Is it the end of the table?
             elif line == ");":
+                output.write("DROP TABLE IF EXISTS \"%s\" CASCADE;\n" % current_table)
                 output.write("CREATE TABLE \"%s\" (\n" % current_table)
                 for i, line in enumerate(creation_lines):
                     output.write("    %s%s\n" % (line, "," if i != (len(creation_lines) - 1) else ""))
@@ -205,6 +206,7 @@ def parse(input_filename, output_filename):
     #for line in cast_lines:
     #    output.write("%s;\n" % line)
 
+    # We need this becuase Redshift uses them as planning hints for query execution [source](https://docs.aws.amazon.com/redshift/latest/dg/t_Defining_constraints.html)
     # Write FK constraints out
     output.write("\n-- Foreign keys --\n")
     for line in foreign_key_lines:
