@@ -201,9 +201,9 @@ def parse(input_filename, output_filename):
     output.write("START TRANSACTION;\n")
 
     # Write typecasts out
-    output.write("\n-- Typecasts --\n")
-    for line in cast_lines:
-        output.write("%s;\n" % line)
+    #output.write("\n-- Typecasts --\n")
+    #for line in cast_lines:
+    #    output.write("%s;\n" % line)
 
     # Write FK constraints out
     output.write("\n-- Foreign keys --\n")
@@ -211,9 +211,9 @@ def parse(input_filename, output_filename):
         output.write("%s;\n" % line)
 
     # Write sequences out
-    output.write("\n-- Sequences --\n")
-    for line in sequence_lines:
-        output.write("%s;\n" % line)
+    #output.write("\n-- Sequences --\n")
+    #for line in sequence_lines:
+    #    output.write("%s;\n" % line)
 
     # Write full-text indexkeyses out
     output.write("\n-- Full Text keys --\n")
