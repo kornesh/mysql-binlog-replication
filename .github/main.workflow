@@ -11,5 +11,5 @@ action "comment-filter" {
 action "HTTP client" {
   uses = "swinton/httpie.action@master"
   needs = ["comment-filter"]
-  args = ["POST", "httpbin.org/anything", "hello=world"]
+  args = ["POST", "httpbin.org/anything", "hello=worldx"]
 }
